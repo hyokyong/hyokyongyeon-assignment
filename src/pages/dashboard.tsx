@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 import { ClipboardList, Clock, CheckCircle } from 'lucide-react'
 import { useDashboard } from '@/hooks/useDashboard'
 import { Card } from '@/components/common/Card'
-import { EmptyState } from '@/components/common/EmptyState'
 
 /** 대시보드 카드 아이템 타입 */
 interface DashboardCardItem {
@@ -19,26 +18,7 @@ interface DashboardCardItem {
  * - useQuery로 데이터 조회 (캐싱, 로딩/에러 자동 처리)
  */
 const DashboardPage = () => {
-  const { data, isLoading, isError } = useDashboard()
-
-  /** 로딩 상태 */
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full py-16">
-        <p className="text-text-secondary">로딩 중...</p>
-      </div>
-    )
-  }
-
-  /** 에러 상태 */
-  if (isError || !data) {
-    return (
-      <EmptyState
-        title="데이터를 불러올 수 없어요."
-        description="잠시 후 다시 시도해주세요."
-      />
-    )
-  }
+  const { data } = useDashboard()
 
   /** 대시보드 카드 목록 */
   const cards: DashboardCardItem[] = [
