@@ -1,5 +1,6 @@
 /** 공통 컴포넌트 일괄 export */
 export { Button } from './Button.tsx'
+export { Spinner } from './Spinner.tsx'
 export { Input } from './Input.tsx'
 export { Modal } from './Modal.tsx'
 export { Badge } from './Badge.tsx'

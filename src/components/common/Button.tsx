@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes } from 'react'
+import { Spinner } from '@/components/common/Spinner.tsx'
 
 /** 버튼 variant 타입 */
 type ButtonVariant = 'primary' | 'danger' | 'ghost'
@@ -66,7 +67,7 @@ export const Button = ({
         .join(' ')}
       {...props}
     >
-      {/* 로딩 시 Spinner 연동은 사용처에서 children 앞에 배치하거나 추후 확장 */}
+      {isLoading && <Spinner size={size} />}
       {children}
     </button>
   )
