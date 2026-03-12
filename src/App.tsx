@@ -18,27 +18,13 @@ const queryClient = new QueryClient({
   },
 })
 
-/**
- * 앱 루트 컴포넌트
- * - 앱 시작 시 토큰 복구 (initialize)
- * - 복구 완료 전까지 로딩 화면 표시
- */
 const AppContent = () => {
-  const { isInitialized, initialize } = useAuthStore()
+  const { initialize } = useAuthStore()
 
   useEffect(() => {
     /** 앱 시작 시 refreshToken으로 accessToken 복구 시도 */
     initialize()
   }, [initialize])
-
-  /** 토큰 복구 완료 전 로딩 화면 */
-  if (!isInitialized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-bg-default">
-        <p className="text-text-secondary">로딩 중...</p>
-      </div>
-    )
-  }
 
   return <RouterProvider router={router} />
 }
