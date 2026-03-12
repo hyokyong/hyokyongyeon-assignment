@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useTaskList } from '@/hooks/useTaskList'
 import TaskCard from '@/components/taskCard'
@@ -7,20 +7,21 @@ import { EmptyState } from '@/components/common/EmptyState'
 const TaskPage = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useTaskList()
 
-  /** 스크롤 컨테이너 ref */
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null) // 스크롤 컨테이너 ref
 
-  const tasks = data.pages.flatMap((page) => page.data)
+  const tasks = useMemo(
+    () => data.pages.flatMap((page) => page.data), //1차원 배열로 평탄화
+    [data.pages] // data.pages가 바뀔 때만 재실행
+  )
 
   const virtualizer = useVirtualizer({
-    count: tasks.length, // 전체 아이템
+    count: tasks.length, // 전체 아이템 수
     getScrollElement: () => scrollRef.current, // 스크롤 컨테이너
     estimateSize: () => 100, // 아이템 예상 높이
     overscan: 5, // 화면 밖 미리 렌더링할 아이템 수 (스크롤 버벅임 방지)
   })
 
-  /** 가상 아이템 목록 - 현재 화면에 보이는 아이템만 포함 */
-  const virtualItems = virtualizer.getVirtualItems()
+  const virtualItems = virtualizer.getVirtualItems() // 현재 화면에 보여야할 목록만 보임
 
   /**
    * 스크롤 끝 감지 → 다음 페이지 호출
