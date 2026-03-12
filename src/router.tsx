@@ -6,6 +6,7 @@ import SignInPage from '@/pages/signIn'
 import TaskPage from '@/pages/task'
 import TaskDetailPage from '@/pages/taskDetail'
 import UserPage from '@/pages/user'
+import { EmptyState } from '@/components/common/EmptyState'
 
 /**
  * 앱 전체 라우트 설정
@@ -48,6 +49,18 @@ const router = createBrowserRouter([
     /** 로그인 - 레이아웃 없이 단독 페이지 */
     path: '/sign-in',
     element: <SignInPage />,
+  },
+  {
+    /** 존재하지 않는 모든 경로 처리 */
+    path: '*',
+    element: (
+      <EmptyState
+        title="페이지를 찾을 수 없어요."
+        description="존재하지 않는 페이지예요."
+        actionLabel="홈으로 돌아가기"
+        onAction={() => (window.location.href = '/')}
+      />
+    ),
   },
 ])
 
