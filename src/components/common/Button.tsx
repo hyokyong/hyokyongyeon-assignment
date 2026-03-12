@@ -20,7 +20,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary: 'bg-primary text-white hover:opacity-90',
   danger: 'bg-danger text-white hover:opacity-90',
   ghost:
-    'bg-transparent text-text-primary border border-gray-300 hover:bg-gray-100',
+    'bg-transparent text-text-primary border border-border-strong hover:bg-bg-default',
 }
 
 /** size별 스타일 */
@@ -66,6 +66,7 @@ export const Button = ({
         .join(' ')}
       {...props}
     >
+      {/* 로딩 시 Spinner 연동은 사용처에서 children 앞에 배치하거나 추후 확장 */}
       {children}
     </button>
   )

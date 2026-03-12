@@ -19,7 +19,7 @@ export const Card = ({ children, className = '', onClick }: CardProps) => {
     <div
       onClick={onClick}
       className={[
-        'bg-bg-card rounded-lg shadow-sm border border-gray-100 p-4',
+        'bg-bg-card rounded-lg shadow-sm border border-border-subtle p-4',
         /* onClick 있으면 커서 포인터 및 hover 효과 */
         onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : '',
         className,

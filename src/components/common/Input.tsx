@@ -42,7 +42,7 @@ export const Input = ({
           /* 에러 상태: 빨간 테두리 */
           error
             ? 'border-danger focus:border-danger'
-            : 'border-gray-300 focus:border-primary',
+            : 'border-border-strong focus:border-primary',
           /* disabled 상태: disabled 색상 토큰 적용 */
           disabled
             ? 'bg-disabled/20 text-disabled cursor-not-allowed'
