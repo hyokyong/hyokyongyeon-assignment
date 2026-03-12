@@ -33,7 +33,7 @@ src/
 ├── components/         # 공통 컴포넌트
 │   ├── GNB/            # 글로벌 네비게이션 바
 │   ├── LNB/            # 로컬 네비게이션 바
-│   └── Modal/          # 공통 모달
+│   └── commons/        # 공통 컴포넌트
 ├── hooks/              # 커스텀 훅
 ├── mocks/              # MSW 핸들러
 │   ├── handlers.ts
