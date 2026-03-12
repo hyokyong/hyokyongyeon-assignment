@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuthStore } from '@/stores/authStore'
 import { Button, Input, Modal } from '@/components/common'
+import { signIn } from '@/api/auth'
 
 /**
  * 로그인 폼 유효성 스키마
@@ -33,10 +34,12 @@ type SignInFormValues = z.infer<typeof signInSchema>
  */
 const SignInPage = () => {
   const navigate = useNavigate()
-  const setAccessToken = useAuthStore((s) => s.setAccessToken)
-  const [errorModalMessage, setErrorModalMessage] = useState<string | null>(
-    null
-  )
+  const { setAccessToken } = useAuthStore()
+
+  /** 에러 모달 상태 */
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  /** 로딩 상태 */
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     register,
@@ -48,7 +51,29 @@ const SignInPage = () => {
     defaultValues: { email: '', password: '' },
   })
 
-  const onSubmit = (values: SignInFormValues) => {}
+  /** 폼 제출 핸들러 */
+  const onSubmit = async (data: SignInFormValues) => {
+    setIsLoading(true)
+
+    try {
+      const { accessToken, refreshToken } = await signIn(data)
+
+      /** accessToken: Zustand 메모리 저장 */
+      setAccessToken(accessToken)
+      /** refreshToken: localStorage 저장 */
+      localStorage.setItem('refreshToken', refreshToken)
+
+      /** 로그인 성공 시 대시보드로 이동 */
+      navigate('/')
+    } catch (error: any) {
+      /** API 실패 시 errorMessage 모달 표시 */
+      const message =
+        error.response?.data?.errorMessage ?? '로그인에 실패했습니다.'
+      setErrorMessage(message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-bg-default px-4">
@@ -85,28 +110,28 @@ const SignInPage = () => {
             variant="primary"
             size="lg"
             className="w-full mt-2"
-            disabled={!isValid}
+            disabled={!isValid || isLoading}
           >
             로그인
           </Button>
         </form>
       </div>
 
-      {errorModalMessage && (
+      {errorMessage && (
         <Modal
           title="로그인 실패"
-          onClose={() => setErrorModalMessage(null)}
+          onClose={() => setErrorMessage(null)}
           footer={
             <Button
               variant="primary"
               size="md"
-              onClick={() => setErrorModalMessage(null)}
+              onClick={() => setErrorMessage(null)}
             >
               확인
             </Button>
           }
         >
-          <p className="text-sm text-text-secondary">{errorModalMessage}</p>
+          <p className="text-sm text-text-secondary">{errorMessage}</p>
         </Modal>
       )}
     </div>
