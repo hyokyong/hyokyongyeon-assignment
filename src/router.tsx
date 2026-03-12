@@ -1,10 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom'
-import Layout from '@/components/layout.tsx'
-import DashboardPage from '@/pages/dashboard.tsx'
-import SignInPage from '@/pages/signIn.tsx'
-import TaskPage from '@/pages/task.tsx'
-import TaskDetailPage from '@/pages/taskDetail.tsx'
-import UserPage from '@/pages/user.tsx'
+import Layout from '@/components/layout'
+import ProtectedRoute from '@/components/protectedRoute'
+import DashboardPage from '@/pages/dashboard'
+import SignInPage from '@/pages/signIn'
+import TaskPage from '@/pages/task'
+import TaskDetailPage from '@/pages/taskDetail'
+import UserPage from '@/pages/user'
 
 /**
  * 앱 전체 라우트 설정
@@ -13,9 +14,13 @@ import UserPage from '@/pages/user.tsx'
  */
 const router = createBrowserRouter([
   {
-    /** 공통 레이아웃 적용 라우트 */
     path: '/',
-    element: <Layout />,
+    element: (
+      /** 레이아웃 전체에 보호 라우트 적용 */
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         /** 대시보드 - 기본 경로 */
