@@ -139,3 +139,7 @@ DELETE /api/task/:id      할 일 삭제
 Agent AI 활용 내역은 [AI_USAGE.md](./AI_USAGE.md)를 참고해주세요.
 
 ---
+
+## 배포 환경 참고사항
+
+백엔드 서버가 없으므로 배포 환경에서도 MSW를 사용하여 API를 목킹합니다.

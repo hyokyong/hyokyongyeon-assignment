@@ -1,0 +1,220 @@
+---
+description: 프로젝트 전체 개요 정의
+alwaysApply: true
+---
+
+# 프로젝트 개요
+
+할 일 관리 서비스로 대시보드, 로그인, 할 일 목록/상세, 회원정보 페이지로 구성됩니다.
+백엔드는 없으며 MSW(Mock Service Worker)로 API를 목킹합니다.
+API 명세는 `openapi.yaml` (OAS 3.1)을 기준으로 합니다.
+
+---
+
+## 기술 스택
+
+| 분류            | 기술                     | 결정 이유                                     |
+| --------------- | ------------------------ | --------------------------------------------- |
+| 프레임워크      | React 18 + TypeScript    | 과제 필수 요건                                |
+| 빌드 도구       | Vite                     | CRA 대비 빠른 개발 서버 및 HMR                |
+| 스타일          | Tailwind CSS             | 색상 토큰 관리                                |
+| 서버 상태       | TanStack Query v5        | 무한스크롤, 캐싱, 로딩/에러 상태 선언적 처리  |
+| 클라이언트 상태 | Zustand                  | 인증 토큰만 전역 관리, 가벼운 보일러플레이트  |
+| 라우팅          | React Router v6          | SPA 표준 라우팅                               |
+| 폼 유효성       | React Hook Form + Zod    | 선언적 유효성 검증                            |
+| 가상 스크롤     | TanStack Virtual         | TanStack Query와 동일 생태계                  |
+| API 목킹        | MSW                      | 네트워크 레벨 목킹으로 실제 API와 동일한 환경 |
+| 아이콘          | Lucide React             | 가볍고 일관된 아이콘 세트                     |
+| 폰트            | Pretendard (self-hosted) | CDN 의존성 제거, 안정적 로딩                  |
+| 코드 품질       | ESLint + Prettier        | 일관된 코드 스타일 유지                       |
+
+---
+
+## 폴더 구조
+
+```
+src/
+├── api/                  # API 함수 모음 (axios 인스턴스 포함)
+├── components/           # 공통 컴포넌트
+│   ├── GNB/              # 글로벌 네비게이션 바
+│   ├── LNB/              # 로컬 네비게이션 바
+│   └── Modal/            # 공통 모달
+├── hooks/                # 커스텀 훅
+├── mocks/                # MSW 핸들러
+│   ├── handlers.ts       # 전체 핸들러
+│   └── browser.ts        # MSW 브라우저 설정
+├── pages/                # 페이지 컴포넌트
+│   ├── Dashboard/        # 대시보드 (/)
+│   ├── SignIn/           # 로그인 (/sign-in)
+│   ├── Task/             # 할 일 목록 (/task)
+│   ├── TaskDetail/       # 할 일 상세 (/task/:id)
+│   └── User/             # 회원정보 (/user)
+├── stores/               # Zustand 스토어
+├── styles/               # 전역 스타일, 폰트
+├── types/                # 공통 타입 정의 (openapi.yaml 기반)
+└── router.tsx            # 라우터 설정
+```
+
+---
+
+## 페이지 구성
+
+### GNB/LNB
+
+- 라우트 맵: 대시보드, 할 일
+- 로그인 상태에 따라 회원정보 아이콘 또는 로그인 아이콘 표시
+- 로그인하지 않은 경우 로그인 페이지로 이동
+
+### 대시보드 (/)
+
+- `GET /api/dashboard` 호출
+- numOfTask, numOfRestTask, numOfDoneTask 표시
+- 로그인 필요 (bearerAuth)
+
+### 로그인 (/sign-in)
+
+- `POST /api/sign-in` 호출
+- email: 이메일 형식, 필수
+- password: 영문+숫자, 8~24자, 필수
+- 유효성 미통과 시 제출 버튼 비활성화
+- API 실패 시 errorMessage 모달 표시
+
+### 할 일 목록 (/task)
+
+- `GET /api/task?page={n}` 호출
+- 가상 스크롤링 (TanStack Virtual)
+- 무한 스크롤 (TanStack Query useInfiniteQuery)
+- hasNext가 false일 때까지 페이지 증가
+- 카드: title, memo, status 표시
+- 카드 클릭 시 상세 페이지로 이동
+
+### 할 일 상세 (/task/:id)
+
+- `GET /api/task/:id` 호출
+- title, memo, registerDatetime 표시
+- 404 시 목록으로 돌아가는 버튼 포함한 빈 화면 표시
+- 삭제 버튼 클릭 시 모달 표시
+  - input에 해당 id 입력 후 제출 버튼 활성화
+  - 제출 시 `DELETE /api/task/:id` 호출 후 목록으로 redirect
+
+### 회원정보 (/user)
+
+- `GET /api/user` 호출
+- name, memo 표시
+- 로그인 필요 (bearerAuth)
+
+---
+
+## 개발 순서 정의
+
+✅ STEP 1. 프로젝트 세팅
+✅ STEP 2. MSW 세팅
+✅ STEP 3. 글로벌 스타일, 라우팅, 공통 컴포넌트, 네비게이션
+✅ STEP 4. 로그인 UI
+✅ STEP 5. 공통 api, 로그인 API 연동
+✅ STEP 6. 대시보드
+✅ STEP 7. 할 일 목록
+✅ STEP 8. 할 일 상세
+✅ STEP 9. 회원정보
+✅ STEP 10. AI_USAGE.md + README + 배포
+
+## 인증 전략
+
+```
+로그인 성공
+→ accessToken: Zustand (메모리 저장, XSS 방어)
+→ refreshToken: localStorage (새로고침 후 복구용)
+
+새로고침 시
+→ localStorage의 refreshToken으로 /api/refresh 호출
+→ 새 accessToken 발급 후 Zustand에 저장
+
+API 호출 시
+→ Authorization: Bearer {accessToken} 헤더 자동 첨부 (axios interceptor)
+
+401 응답 시
+→ /api/refresh 호출로 토큰 갱신 후 원래 요청 재시도
+→ 갱신 실패 시 로그인 페이지로 redirect
+```
+
+---
+
+## 색상 토큰
+
+모든 색상은 Tailwind config에서 토큰으로 관리합니다.
+절대로 하드코딩된 색상값을 사용하지 않습니다.
+
+```js
+// index.css 예시
+/* 색상 토큰 설정 - Tailwind v4 방식 */
+@theme {
+  --color-primary: #3b82f6;
+  --color-disabled: #9ca3af;
+  --color-danger: #ef4444;
+  --color-success: #10b981;
+}
+```
+
+---
+
+## API 타입 정의
+
+openapi.yaml 기반으로 아래 타입을 `src/types/api.ts`에 정의합니다.
+
+```ts
+// 예시
+export interface SignInRequest {
+  email: string
+  password: string
+}
+
+export interface AuthTokenResponse {
+  accessToken: string
+  refreshToken: string
+}
+
+export interface UserResponse {
+  name: string
+  memo: string
+}
+
+export interface DashboardResponse {
+  numOfTask: number
+  numOfRestTask: number
+  numOfDoneTask: number
+}
+
+export type TaskStatus = 'TODO' | 'DONE'
+
+export interface TaskItem {
+  id: string
+  title: string
+  memo: string
+  status: TaskStatus
+}
+```
+
+---
+
+## 절대경로 설정
+
+`@/` 를 `src/` 로 매핑합니다.
+
+```ts
+// 사용 예시
+import { useAuthStore } from '@/stores/authStore'
+import { TaskItem } from '@/types/api'
+```
+
+---
+
+## 코딩 규칙
+
+- 컴포넌트 파일명: PascalCase (예: `TaskCard.tsx`)
+- 훅 파일명: camelCase, use 접두사 (예: `useTaskList.ts`)
+- 타입은 interface 우선 사용
+- 색상은 반드시 Tailwind 토큰 클래스 사용 (하드코딩 금지)
+- API 함수는 `src/api/` 에서만 관리
+- 페이지 컴포넌트는 `src/pages/` 에서만 관리
+
+---
