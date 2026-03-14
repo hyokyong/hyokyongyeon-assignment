@@ -5,18 +5,16 @@ import App from '@/App.tsx'
 
 /**
  * MSW 목 서버 활성화 함수
- * - 개발 환경(DEV)에서만 MSW 워커를 시작
- * - 프로덕션 빌드에서는 실행되지 않음
  * - onUnhandledRequest: 'bypass' → 핸들러 없는 요청은 그냥 통과
  */
 async function enableMocking() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import('./mocks/browser')
-    return worker.start({
-      // 핸들러가 없는 요청은 실제 네트워크로 bypass (콘솔 경고 없음)
-      onUnhandledRequest: 'bypass',
-    })
-  }
+  // if (import.meta.env.DEV) {
+  const { worker } = await import('./mocks/browser')
+  return worker.start({
+    // 핸들러가 없는 요청은 실제 네트워크로 bypass (콘솔 경고 없음)
+    onUnhandledRequest: 'bypass',
+  })
+  // }
 }
 
 /**
