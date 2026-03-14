@@ -1,5 +1,7 @@
 # 프론트엔드 과제
 
+https://hyokyongyeon-assignment.vercel.app/
+
 ## 📌 프로젝트 개요
 
 React 18 + TypeScript 기반의 프로젝트입니다.
