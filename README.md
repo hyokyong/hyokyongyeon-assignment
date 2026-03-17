@@ -1,4 +1,4 @@
-# 프론트엔드 과제
+# 할 일 관리 대시보드 만들기
 
 https://hyokyongyeon-assignment.vercel.app/
 
